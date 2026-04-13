@@ -1,7 +1,11 @@
 import os
 import numpy as np
-import tensorflow as tf
 from typing import Tuple
+
+try:
+    import tensorflow as tf
+except Exception:
+    tf = None
 
 # Calculamos la ruta absoluta hacia backend/ml_artifacts/modelo_fnn.h5
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -12,7 +16,9 @@ modelo_ia = None
 
 # Carga del modelo al inicializar el módulo (una sola vez)
 try:
-    if os.path.exists(MODEL_PATH):
+    if tf is None:
+        print("TensorFlow no esta disponible en este entorno. El endpoint de prediccion no funcionara hasta instalarlo.")
+    elif os.path.exists(MODEL_PATH):
         # Usamos compile=False si solo vamos a hacer inferencia
         modelo_ia = tf.keras.models.load_model(MODEL_PATH, compile=False)
         print(f"✅ Modelo de IA cargado exitosamente desde: {MODEL_PATH}")
